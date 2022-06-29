@@ -9,8 +9,9 @@ const createCollege = async function(req,res){
     return res.send({status: false, msg: "all details are mandatory(name,fullName,logoLink)"});
 
     if(!isValid(data.name)) return res.status(400).send({status: false, msg: "name can not be empty"});
+    if (!isValidCollegeName(data.name)) return res.status(400).send({ status: false, msg: "collegeName is not valid" });
 
-    if(!isValidName(data.name)) return res.status(400).send({status:false, msg: "write in required form"});
+    // if(!isValidName(data.name)) return res.status(400).send({status:false, msg: "write in required form"});
 
     if(!isValid(data.fullName)) return res.status(400).send({status: false, msg: "fullName can not be empty"});
     if(!isValidName(data.fullName)) return res.status(400).send({status:false, msg: "write fullName in required form"});

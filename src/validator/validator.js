@@ -4,6 +4,10 @@ const isValidName=(name)=>{
     if(/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/.test(name))
     return true
 };
+const isValidCollegeName = (name) => {
+    if (/^[a-z]+$/.test(name))
+        return true
+};
 
 const isValid=(value)=>{
     if(typeof value==="undefined" || value=== null ) return false
@@ -28,5 +32,5 @@ const isValidEmail=(email)=>{
 
 
 module.exports = {
-    isValidName, isValid, isValidUrl, isValidMobile, isValidEmail
+    isValidName, isValid, isValidUrl, isValidMobile, isValidEmail,isValidCollegeName
 }
