@@ -4,6 +4,7 @@ const internModel = require("../model/internModel");
 const {isValid, isValidName, isValidUrl, isValidCollegeName, isValidEmail, isValidMobile} = require("../validator/validator");
 
 const createIntern = async function(req,res){
+    try{
     let data = req.body
     let mobile = data.mobile
     let email = data.email
@@ -34,11 +35,16 @@ const createIntern = async function(req,res){
     let savedData = await internModel.create(data)
     return res.status(201).send({status: true, msg: savedData})
 
-}
+    } catch(error){
+        res.status(500)
+    }
+
+};
+
 
 const getCollege = async function (req, res) {
     try{
-    let collegeName = req.query.name
+    let {collegeName} = req.query
     let query=req.query
     let data = Object.keys(query)
     if (!data.length) return res.status(400).send({ status: false, msg: "Data can not be empty" });
@@ -51,7 +57,8 @@ const getCollege = async function (req, res) {
     let interns = await internModel.find({ collegeId: collegeid, isDeleted: false }, { name: 1, email: 1, mobile: 1 })
 
    
-    if(!interns.length) return res.status(404).send({status:false, msg: "No Intern Associated With This College"})
+    if(!interns.length) return res.status(400).send({ data: { name: collegeDetail.name, fullName: collegeDetail.fullName, logoLink: collegeDetail.logoLink} , Interns :"No Interns associated with this college"})
+    
     console.log(interns)
     return res.status(200).send({ data: { name: collegeDetail.name, fullName: collegeDetail.fullName, logoLink: collegeDetail.logoLink, interns: interns } })
 
