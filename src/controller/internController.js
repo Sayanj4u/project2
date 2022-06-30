@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const collegeModel = require ("../model/collegeModel");
 const internModel = require("../model/internModel");
-const {isValid, isValidName, isValidUrl, isValidEmail, isValidMobile} = require("../validator/validator");
+const {isValid, isValidName, isValidUrl, isValidCollegeName, isValidEmail, isValidMobile} = require("../validator/validator");
 
 const createIntern = async function(req,res){
     let data = req.body
@@ -11,8 +11,6 @@ const createIntern = async function(req,res){
     if(!mongoose.isValidObjectId(data.collegeId)) return res.status(400).send({status: false, msg: "please enter valid id"})
     let collegeid = await collegeModel.findById(data.collegeId)
     if(!collegeid) return res.status(404).send({status:false, msg: "college not found"})
-
-    
 
     let mobileAndEmail = await internModel.findOne({$and: [{mobile: mobile,email:email}]})
     if(mobileAndEmail) return res.status(400).send({status:false, msg: "Either mobile No. or email is already registered"})
@@ -43,7 +41,7 @@ const getCollege = async function (req, res) {
     let collegeName = req.query.name
     let query=req.query
     let data = Object.keys(query)
-    if (!data.length) return res.status(411).send({ status: false, msg: "Data can not be empty" });
+    if (!data.length) return res.status(400).send({ status: false, msg: "Data can not be empty" });
     if (!isValidCollegeName(query.name)) return res.status(400).send({ status: false, msg: "collegeName is not valid" });
 
     let collegeDetail = await collegeModel.findOne({ name: collegeName })
@@ -52,9 +50,9 @@ const getCollege = async function (req, res) {
     console.log(collegeid)
     let interns = await internModel.find({ collegeId: collegeid, isDeleted: false }, { name: 1, email: 1, mobile: 1 })
 
+   
+    if(!interns.length) return res.status(404).send({status:false, msg: "No Intern Associated With This College"})
     console.log(interns)
-
-
     return res.status(200).send({ data: { name: collegeDetail.name, fullName: collegeDetail.fullName, logoLink: collegeDetail.logoLink, interns: interns } })
 
 
@@ -66,26 +64,5 @@ const getCollege = async function (req, res) {
 
 }
 
-
-
-// const getCollegeDetails = async function (req, res) {
-//     try {
-
-//         const collegeName = req.query.name
-//         if (!collegeName) return res.status(400).send({ status: false, msg: "college name is required" })
-//         const allData = await collegeModel.findOne({ name:collegeName}).select({name:1,fullName:1,logoLink:1})
-//         if (!allData) return res.status(400).send({ status: false, msg: "college does not exist" })
-//         const interns = await internModel.find({ collegeId: allData._id, isDeleted: false }, { name: 1, email: 1, mobile: 1 })
-//         if (!interns) return res.status(400).send({ status: false, msg: "interns not found or already deleted" })
-
-//         res.status(200).send({ status: true, data: { name: allData.name, fullName: allData.fullName, logoLink: allData.logoLink, interns: interns } })
-
-
-//     }
-//     catch (err) {
-//         return res.status(500).send({ status: false, msg: err.message })
-
-//     }
-// }
 
 module.exports = {createIntern,getCollege}

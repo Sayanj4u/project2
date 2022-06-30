@@ -1,5 +1,5 @@
 const collegeModel = require ("../model/collegeModel");
-const {isValid, isValidName, isValidUrl} = require("../validator/validator");
+const {isValid, isValidName, isValidCollegeName, isValidUrl} = require("../validator/validator");
 
 //create college api
 const createCollege = async function(req,res){
